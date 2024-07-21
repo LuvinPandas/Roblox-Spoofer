@@ -6,4 +6,6 @@ An open-source spoofer written in C++ for the game 'Roblox' that bypasses Roblox
 
 Too busy to compile it yourself? Grab a pre-compiled version from the Releases section.
 
-* btw I suck at C++ don't expect this to be the best thing you've ever seen
+# Disclaimer
+This is a small project created for fun. I am not responsible for any misuse or unintended consequences arising from the use of this product.
+

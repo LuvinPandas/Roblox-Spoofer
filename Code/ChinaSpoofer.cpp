@@ -1,31 +1,30 @@
 #include <iostream>
 #include <windows.h>
-#include <tlhelp32.h> // Process32First, Process32Next
+#include <tlhelp32.h> 
 #include <string>
-#include <shlobj.h> // SHGetFolderPath
-#include <winreg.h> // Registry operations
+#include <shlobj.h> 
+#include <winreg.h> 
 #include <vector>
 #include <sstream>
 #include <iomanip>
 #include <winnetwk.h>
-// Set console text color
+
 void SetConsoleTextColor(WORD color) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, color);
 }
 
-// Reset console text color to default
+
 void ResetConsoleTextColor() {
-    SetConsoleTextColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Default color
+    SetConsoleTextColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
 
-// Print messages with a specific color
 void PrintMessage(const std::string& level, const std::string& message, WORD color) {
     SetConsoleTextColor(color);
     std::cout << "[" << level << "] " << message << std::endl;
     ResetConsoleTextColor();
 }
-// Check if running as admin
+// thx microsoft website
 bool IsRunningAsAdmin() {
     BOOL isAdmin = FALSE;
     PSID adminGroupSid = NULL;
@@ -39,8 +38,6 @@ bool IsRunningAsAdmin() {
     return isAdmin == TRUE;
 }
 
-
-// Check if Roblox is running
 bool IsRobloxRunning() {
     HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 
@@ -66,28 +63,8 @@ bool IsRobloxRunning() {
     return found;
 }
 
-// Delete Roblox's temp files
-bool DeleteRobloxTempFiles() {
-    TCHAR tempPath[MAX_PATH];
-    if (SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, tempPath) != S_OK) {
-        return false;
-    }
 
-    std::wstring robloxPath = std::wstring(tempPath) + L"\\Roblox";
-    BOOL result = RemoveDirectory(robloxPath.c_str());
 
-    if (result == 0) {
-        DWORD error = GetLastError();
-        if (error == ERROR_FILE_NOT_FOUND) {
-            return true; // Considered success
-        }
-        return false; // Error
-    }
-
-    return true; // Deleted successfully
-}
-
-// Generate a random MAC address
 std::string GenerateRandomMacAddress() {
     std::ostringstream macAddress;
     macAddress << std::hex << std::uppercase << std::setw(2) << std::setfill('0');
@@ -98,7 +75,6 @@ std::string GenerateRandomMacAddress() {
     return macAddress.str();
 }
 
-// Enable or disable network connection
 void EnableLocalAreaConnection(const std::string& adapterName, bool enable) {
     std::string control = enable ? "enable" : "disable";
     std::string command = "netsh interface set interface \"" + adapterName + "\" " + control;
@@ -106,7 +82,6 @@ void EnableLocalAreaConnection(const std::string& adapterName, bool enable) {
     system(command.c_str());
 }
 
-// Spoof the MAC address
 bool SpoofMAC() {
     HKEY hKey;
     LONG result;
@@ -119,7 +94,7 @@ bool SpoofMAC() {
         FILETIME lastWriteTime;
 
         for (DWORD i = 0; RegEnumKeyEx(hKey, i, subKeyName, &subKeyNameSize, NULL, NULL, NULL, &lastWriteTime) == ERROR_SUCCESS; i++) {
-            // Initialize subKeyNameSize for each iteration
+        // 🤓
             subKeyNameSize = sizeof(subKeyName) / sizeof(TCHAR) - 1;
 
             if (wcscmp(subKeyName, L"Properties") != 0) {
@@ -167,14 +142,14 @@ int main() {
         PrintMessage("ERROR", "This application requires administrative privileges. Please run as administrator.", FOREGROUND_RED | FOREGROUND_INTENSITY);
         std::cout << "Press any key to exit..." << std::endl;
         std::cin.get();
-        return 1; // Exit with an error code
+        return 1; 
     }
-    // Check if Roblox is running
+
     if (IsRobloxRunning()) {
         PrintMessage("ERROR", "Roblox is currently running. Please close Roblox to use the spoofer.", FOREGROUND_RED | FOREGROUND_INTENSITY);
         std::cout << "Press any key to exit..." << std::endl;
         std::cin.get();
-        return 1; // Exit with an error code
+        return 1; 
     }
 
     PrintMessage("INFO", "Roblox Spoofer v1.0", FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
@@ -189,14 +164,7 @@ int main() {
         PrintMessage("INFO", "MAC address spoofed successfully.", FOREGROUND_GREEN | FOREGROUND_INTENSITY);
     }
 
-    // Clear Roblox's Temp Files
-    PrintMessage("INFO", "Clearing Roblox temp files...", FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-    if (DeleteRobloxTempFiles()) {
-        PrintMessage("INFO", "Roblox temp files cleared successfully.", FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-    }
-    else {
-        PrintMessage("ERROR", "Failed to clear Roblox temp files or Roblox temp directory does not exist.", FOREGROUND_RED | FOREGROUND_INTENSITY);
-    }
+ 
 
     PrintMessage("INFO", "Operation completed.", FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 

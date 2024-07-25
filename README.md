@@ -1,6 +1,5 @@
 # Roblox-Spoofer
-An open-source spoofer written in C++ for the game 'Roblox' that bypasses Roblox's alt detection system by spoofing MAC addresses and clearing Roblox's temp files.
-
+An open-source spoofer written in C++ for the game 'Roblox' that bypasses Roblox's alt detection system by spoofing MAC addresse
 # Supported Systems:
 * Windows 11/10
 
